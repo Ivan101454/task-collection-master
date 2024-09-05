@@ -13,14 +13,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
 //        task1();
-        task2();
-//        task3();
+//        task2();
+        task3();
 //        task4();
 //        task5();
 //        task6();
@@ -67,7 +68,12 @@ public class Main {
 
     public static void task3() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        Set<String> country = animals.stream()
+                .filter(animal -> animal.getAge() > 30)
+                .filter(animal -> animal.getOrigin().substring(0, 1).equalsIgnoreCase("a"))
+                .map(animal -> animal.getOrigin())
+                        .collect(Collectors.toSet());
+        country.forEach(System.out::println);
     }
 
     public static void task4() {
