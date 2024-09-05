@@ -21,10 +21,10 @@ public class Main {
     public static void main(String[] args) {
 //        task1();
 //        task2();
-        task3();
+//        task3();
 //        task4();
 //        task5();
-//        task6();
+        task6();
 //        task7();
 //        task8();
 //        task9();
@@ -72,23 +72,33 @@ public class Main {
                 .filter(animal -> animal.getAge() > 30)
                 .filter(animal -> animal.getOrigin().substring(0, 1).equalsIgnoreCase("a"))
                 .map(animal -> animal.getOrigin())
-                        .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         country.forEach(System.out::println);
     }
 
     public static void task4() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        long female = animals.stream()
+                .filter(animal -> animal.getGender().equals("Female"))
+                .count();
+        System.out.println(female);
     }
 
     public static void task5() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean size = animals.stream()
+                .filter(animal -> animal.getAge() >= 20 && animal.getAge() <= 30)
+                .filter(animal -> Objects.equals(animal.getOrigin(), "Hungarian"))
+                .toList().isEmpty();
+        System.out.println("Есть ли среди нах хоть один из страны Венгрия (Hungarian): %b ".formatted(!size));
     }
 
     public static void task6() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean count = animals.stream()
+                .filter(animal -> animal.getGender() != "Male" && animal.getGender() != "Female")
+                .collect(Collectors.toSet()).isEmpty();
+        System.out.println(String.format("Все ли они пола Male и Female ? Answer: %b", !count));
     }
 
     public static void task7() {
