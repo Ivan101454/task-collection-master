@@ -9,78 +9,123 @@ import by.clevertec.model.Person;
 import by.clevertec.model.Student;
 import by.clevertec.util.Util;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
-        task1();
-        task2();
-        task3();
-        task4();
-        task5();
-        task6();
-        task7();
-        task8();
+//        task1();
+//        task2();
+//        task3();
+//        task4();
+//        task5();
+//        task6();
+//        task7();
+//        task8();
         task9();
-        task10();
-        task11();
-        task12();
-        task13();
-        task14();
-        task15();
-        task16();
-        task17();
-        task18();
-        task19();
-        task20();
-        task21();
-        task22();
+//        task10();
+//        task11();
+//        task12();
+//        task13();
+//        task14();
+//        task15();
+//        task16();
+//        task17();
+//        task18();
+//        task19();
+//        task20();
+//        task21();
+//        task22();
     }
 
     public static void task1() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> (animal.getAge() >= 10 && animal.getAge() < 20))
+                .sorted(Comparator.comparing(Animal::getAge))
+                .skip(14).limit(7)
+                .forEach(System.out::println);
     }
 
     public static void task2() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        List<String> result = animals.stream()
+                .filter(animal -> Objects.equals(animal.getOrigin(), "Japanese"))
+                .map(animal -> {
+                    String s = animal.getGender().equals("Female") ?
+                            animal.getBread().toUpperCase().toString()
+                            : animal.getBread().toString();
+                    return s;
+                })
+                .collect(Collectors.toList());
+        result.forEach(System.out::println);
     }
 
     public static void task3() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        Set<String> country = animals.stream()
+                .filter(animal -> animal.getAge() > 30)
+                .filter(animal -> animal.getOrigin().substring(0, 1).equalsIgnoreCase("a"))
+                .map(animal -> animal.getOrigin())
+                .collect(Collectors.toSet());
+        country.forEach(System.out::println);
     }
 
     public static void task4() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        long female = animals.stream()
+                .filter(animal -> animal.getGender().equals("Female"))
+                .count();
+        System.out.println(female);
     }
 
     public static void task5() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean size = animals.stream()
+                .filter(animal -> animal.getAge() >= 20 && animal.getAge() <= 30)
+                .filter(animal -> Objects.equals(animal.getOrigin(), "Hungarian"))
+                .toList().isEmpty();
+        System.out.println("Есть ли среди нах хоть один из страны Венгрия (Hungarian): %b ".formatted(!size));
     }
 
     public static void task6() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean count = animals.stream()
+                .filter(animal -> animal.getGender() != "Male" && animal.getGender() != "Female")
+                .collect(Collectors.toSet()).isEmpty();
+        System.out.println(String.format("Все ли они пола Male и Female ? Answer: %b", !count));
     }
 
     public static void task7() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean oceania = animals.stream()
+                .filter(animal -> animal.getOrigin().equals("Oceania"))
+                .collect(Collectors.toSet())
+                .isEmpty();
+        System.out.println("Узнать что ни одно из них не имеет страну происхождения Oceania. Ответ: " + oceania);
     }
 
     public static void task8() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        Animal oldest = animals.stream()
+                .sorted((a1, a2) -> a1.getBread().compareToIgnoreCase(a2.getBread()))
+                .limit(100)
+                .max(Comparator.comparingInt(Animal::getAge))
+                .get();
+        System.out.println(oldest);
     }
 
     public static void task9() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .map(a -> a.getBread().toCharArray())
+                .sorted()
+
     }
 
     public static void task10() {
