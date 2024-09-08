@@ -24,10 +24,10 @@ public class Main {
 //        task3();
 //        task4();
 //        task5();
-        task6();
+//        task6();
 //        task7();
 //        task8();
-//        task9();
+        task9();
 //        task10();
 //        task11();
 //        task12();
@@ -103,17 +103,29 @@ public class Main {
 
     public static void task7() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean oceania = animals.stream()
+                .filter(animal -> animal.getOrigin().equals("Oceania"))
+                .collect(Collectors.toSet())
+                .isEmpty();
+        System.out.println("Узнать что ни одно из них не имеет страну происхождения Oceania. Ответ: " + oceania);
     }
 
     public static void task8() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        Animal oldest = animals.stream()
+                .sorted((a1, a2) -> a1.getBread().compareToIgnoreCase(a2.getBread()))
+                .limit(100)
+                .max(Comparator.comparingInt(Animal::getAge))
+                .get();
+        System.out.println(oldest);
     }
 
     public static void task9() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .map(a -> a.getBread().toCharArray())
+                .sorted()
+
     }
 
     public static void task10() {
