@@ -9,12 +9,17 @@ import by.clevertec.model.Person;
 import by.clevertec.model.Student;
 import by.clevertec.util.Util;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -27,7 +32,7 @@ public class Main {
 //        task6();
 //        task7();
 //        task8();
-        task9();
+//        task9();
 //        task10();
 //        task11();
 //        task12();
@@ -36,7 +41,7 @@ public class Main {
 //        task15();
 //        task16();
 //        task17();
-//        task18();
+        task18();
 //        task19();
 //        task20();
 //        task21();
@@ -112,40 +117,58 @@ public class Main {
 
     public static void task8() {
         List<Animal> animals = Util.getAnimals();
-        Animal oldest = animals.stream()
+        Optional<Animal> oldest = animals.stream()
                 .sorted((a1, a2) -> a1.getBread().compareToIgnoreCase(a2.getBread()))
                 .limit(100)
-                .max(Comparator.comparingInt(Animal::getAge))
-                .get();
-        System.out.println(oldest);
+                .max(Comparator.comparingInt(Animal::getAge));
+        oldest.ifPresent(System.out::println);
     }
 
     public static void task9() {
         List<Animal> animals = Util.getAnimals();
-        animals.stream()
+        char[] first = animals.stream()
                 .map(a -> a.getBread().toCharArray())
-                .sorted()
-
+                .sorted(Comparator.comparing(ch -> Integer.valueOf(ch.length)))
+                .collect(Collectors.toList())
+                .getFirst();
+        System.out.println("длину самого короткого массива " + first.length);
     }
 
     public static void task10() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        int sum = animals.stream()
+                .mapToInt(Animal::getAge)
+                .sum();
+        System.out.println("суммарный возраст всех животных " + sum);
     }
 
     public static void task11() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        double indonesian = animals.stream()
+                .filter(animal -> animal.getOrigin().equals("Indonesian"))
+                .mapToInt(Animal::getAge)
+                .summaryStatistics()
+                .getAverage();
+        System.out.println("средний возраст всех животных из индонезии " + indonesian + " лет");
     }
 
     public static void task12() {
         List<Person> persons = Util.getPersons();
-//        persons.stream() Продолжить ...
+
+        List<Person> male = persons.stream()
+                .filter(person -> person.getGender().equals("Male"))
+                .filter(person -> ((ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18) &&
+                                   (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) <= 27)))
+                .sorted(Comparator.comparingInt(Person::getRecruitmentGroup))
+                .limit(200)
+                .collect(Collectors.toList());
+        System.out.println("Взять на обучение академия может только: ");
+        male.forEach(System.out::println);
     }
 
     public static void task13() {
         List<House> houses = Util.getHouses();
-//        houses.stream() Продолжить ...
+//        houses.stream().
     }
 
     public static void task14() {
@@ -160,18 +183,28 @@ public class Main {
 
     public static void task16() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        List<String> studentList = students.stream()
+                .filter(student -> student.getAge() <= 18)
+                .sorted((s1, s2) -> s1.getSurname().compareToIgnoreCase(s2.getSurname()))
+                .flatMap(stud -> Stream.of(String.format("имя %s возвраст %d", stud.getSurname(),
+                        stud.getAge())))
+                .collect(Collectors.toList());
+        studentList.forEach(System.out::println);
     }
 
     public static void task17() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        students.stream()
+                .map(student -> student.getGroup())
+                .collect(Collectors.toSet())
+                .forEach(System.out::println);
     }
 
     public static void task18() {
         List<Student> students = Util.getStudents();
         List<Examination> examinations = Util.getExaminations();
-//        students.stream() Продолжить ...
+        students.stream()
+                .
     }
 
     public static void task19() {
