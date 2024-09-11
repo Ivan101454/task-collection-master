@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -232,12 +233,22 @@ public class Main {
         Map<Integer, Integer> valueStudents = examinations.stream()
                 .collect(Collectors.toMap(Examination::getStudentId,
                                 Examination::getExam1));
-        Map<String, List<Student>> studByGroup = students.stream()
-                .collect(Collectors.groupingBy(Student::getGroup));
-        studByGroup.entrySet().stream().forEach(x -> x.getValue()
-                        .stream()
-                        .collect(Collectors.averagingDouble(y -> valueStudents.get(y.getId()))));
+        Map<String, IntSummaryStatistics> collect = students.stream()
+                .filter(x -> valueStudents.containsKey(x.getId()))
+                .collect(Collectors.groupingBy(Student::getGroup,
+                        Collectors.summarizingInt(x -> valueStudents.get(x.getId()))));
+        Optional<Map.Entry<String, IntSummaryStatistics>> max = collect.entrySet()
+                .stream()
+                .max((d1, d2) -> {
+                            if (d1.getValue().getAverage() > d2.getValue().getAverage()) return (int) d1.getValue().getAverage();
+                            return (int) d2.getValue().getAverage();
+                        }
+                );
+        System.out.println("Группа с макс средним баллом номер - " + max
+                .orElseThrow().getKey()
+                + " и он равняется =" + max.orElseThrow().getValue().getAverage());
     }
+
 
     public static void task21() {
         List<Student> students = Util.getStudents();
