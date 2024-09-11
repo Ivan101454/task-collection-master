@@ -12,11 +12,14 @@ import by.clevertec.util.Util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,9 +44,9 @@ public class Main {
 //        task15();
 //        task16();
 //        task17();
-        task18();
+//        task18();
 //        task19();
-//        task20();
+        task20();
 //        task21();
 //        task22();
     }
@@ -202,19 +205,38 @@ public class Main {
 
     public static void task18() {
         List<Student> students = Util.getStudents();
-        List<Examination> examinations = Util.getExaminations();
-        students.stream()
-                .
+        Map<String, Double> collectByFaculty = students.stream()
+                .collect(Collectors.groupingBy(Student::getFaculty, Collectors.averagingDouble(Student::getAge)));
+        collectByFaculty.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(e ->
+                System.out.println("Faculty " + e.getKey() + "average of students " + e.getValue()));
     }
 
     public static void task19() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        List<Examination> examinations = Util.getExaminations();
+        String group;
+        System.out.println("Введите номер группы, например M-2");
+        try (Scanner scanner = new Scanner(System.in)) {
+            group = scanner.nextLine().trim();
+        }
+        Map<Integer, Integer> collectStudents = examinations.stream().filter(s -> s.getExam3() > 4).collect(
+                Collectors.toMap(Examination::getStudentId, Examination::getExam3));
+        students.stream().filter(s -> s.getGroup().equals(group))
+                .filter(s -> collectStudents.containsKey(s.getId()))
+                .forEach(System.out::println);
     }
 
     public static void task20() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        List<Examination> examinations = Util.getExaminations();
+        Map<Integer, Integer> valueStudents = examinations.stream()
+                .collect(Collectors.toMap(Examination::getStudentId,
+                                Examination::getExam1));
+        Map<String, List<Student>> studByGroup = students.stream()
+                .collect(Collectors.groupingBy(Student::getGroup));
+        studByGroup.entrySet().stream().forEach(x -> x.getValue()
+                        .stream()
+                        .collect(Collectors.averagingDouble(y -> valueStudents.get(y.getId()))));
     }
 
     public static void task21() {

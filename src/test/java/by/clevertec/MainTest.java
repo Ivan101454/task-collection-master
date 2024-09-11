@@ -32,4 +32,9 @@ class MainTest {
                 .collect(Collectors.toList());
         male.forEach(System.out::println);
     }
+
+    @Test
+    void task18Test() {
+        Main.task18();
+    }
 }
