@@ -40,8 +40,8 @@ public class Main {
 //        task10();
 //        task11();
 //        task12();
-        task13();
-//        task14();
+//        task13();
+        task14();
 //        task15();
 //        task16();
 //        task17();
@@ -71,7 +71,7 @@ public class Main {
                             : animal.getBread().toString();
                     return s;
                 })
-                .collect(Collectors.toList());
+                .toList();
         result.forEach(System.out::println);
     }
 
@@ -105,7 +105,7 @@ public class Main {
     public static void task6() {
         List<Animal> animals = Util.getAnimals();
         boolean count = animals.stream()
-                .filter(animal -> animal.getGender() != "Male" && animal.getGender() != "Female")
+                .filter(animal -> !animal.getGender().equals("Male") && !animal.getGender().equals("Female"))
                 .collect(Collectors.toSet()).isEmpty();
         System.out.printf("Все ли они пола Male и Female ? Answer: %b%n", !count);
     }
@@ -181,7 +181,7 @@ public class Main {
                 .flatMap(List::stream)
                 .toList();
         List<Person> collect2 = collectTemp.stream().filter(person -> ((ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) <= 18) &&
-                                                                   (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63)))
+                                                                       (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63)))
                 .toList();
         List<Person> collect3 = collectTemp.stream().filter(person -> ((ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) > 18) &&
                                                                        (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 63)))
@@ -192,7 +192,50 @@ public class Main {
 
     public static void task14() {
         List<Car> cars = Util.getCars();
-//        cars.stream() Продолжить ...
+        final double price = 7.14;
+        Map<Boolean, List<Car>> jaguar = cars.stream().collect(Collectors
+                .partitioningBy(a -> a.getCarMake().equals("Jaguar") || a.getColor().equals("White")));
+        Optional<Integer> mass1 = jaguar.get(true).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.printf("Первый эшелон масса %d, итого  %f", mass1.orElse(0), mass1.orElse(0) * price);
+        Map<Boolean, List<Car>> bmw = jaguar.get(false).stream()
+                .collect(Collectors.partitioningBy(a -> (a.getMass() < 1500) ||
+                                                        (a.getCarMake().equals("BMW") ||
+                                                         a.getCarMake().equals("Lexus") ||
+                                                         a.getCarMake().equals("Chrysler") ||
+                                                         a.getCarMake().equals("Toyota"))));
+        Optional<Integer> mass2 = bmw.get(true).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.println("Второй эшелон масса %d, итого  %f".formatted(mass2.orElse(0), mass2.orElse(0)*price));
+        Map<Boolean, List<Car>> gmc = bmw.get(false).stream()
+                .collect(Collectors
+                        .partitioningBy(a -> ((a.getColor().equals("Black"))
+                                              || (a.getMass() > 4000))
+                                             || (a.getCarMake().equals("GMC")
+                                                 || a.getCarMake().equals("Dodge"))));
+        Optional<Integer> mass3 = gmc.get(true).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.println("Третий эшелон масса %d, итого  %f".formatted(mass3.orElse(0), mass3.orElse(0)*price));
+        Map<Boolean, List<Car>> civic = gmc.get(false)
+                .stream()
+                .collect(Collectors.partitioningBy(a -> (a.getReleaseYear() < 1982)
+                                                        || (a.getCarModel().equals("Civic"))
+                                                        || (a.getCarModel().equals("Cherokee"))));
+        Optional<Integer> mass4 = civic.get(true).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.println("Четвертый эшелон масса %d, итого  %f".formatted(mass4.orElse(0), mass4.orElse(0)*price));
+        Map<Boolean, List<Car>> yellow = civic.get(false).stream()
+                .collect(Collectors.partitioningBy(a -> (!(a.getPrice() > 40000)
+                                                         || (a.getColor().equals("Yellow"))
+                                                         || (a.getColor().equals("Red"))
+                                                         || (a.getColor().equals("Green"))
+                                                         || (a.getColor().equals("Blue"))
+                )));
+        Optional<Integer> mass5 = yellow.get(false).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.println("Пятый эшелон масса %d, итого  %f".formatted(mass5.orElse(0), mass5.orElse(0)*price));
+        Map<Boolean, List<Car>> vin = yellow.get(true).stream().collect(Collectors.partitioningBy(a -> a.getVin().contains("59")));
+        Optional<Integer> mass6 = vin.get(true).stream().map(Car::getMass).reduce(Integer::sum);
+        System.out.println("Шестой эшелон масса %d, итого  %f".formatted(mass6.orElse(0), mass6.orElse(0)*price));
+        int resultMass = mass1.orElse(0) + mass2.orElse(0) + mass3.orElse(0) + mass4.orElse(0)
+                         + mass5.orElse(0) + mass6.orElse(0);
+        double resultSumm =  resultMass * price;
+        System.out.printf("итого вес %d итого сумма %f", resultMass, resultSumm);
     }
 
     public static void task15() {
@@ -207,14 +250,14 @@ public class Main {
                 .sorted((s1, s2) -> s1.getSurname().compareToIgnoreCase(s2.getSurname()))
                 .flatMap(stud -> Stream.of(String.format("имя %s возвраст %d", stud.getSurname(),
                         stud.getAge())))
-                .collect(Collectors.toList());
+                .toList();
         studentList.forEach(System.out::println);
     }
 
     public static void task17() {
         List<Student> students = Util.getStudents();
         students.stream()
-                .map(student -> student.getGroup())
+                .map(Student::getGroup)
                 .collect(Collectors.toSet())
                 .forEach(System.out::println);
     }
