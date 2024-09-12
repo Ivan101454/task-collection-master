@@ -40,7 +40,7 @@ public class Main {
 //        task10();
 //        task11();
 //        task12();
-//        task13();
+        task13();
 //        task14();
 //        task15();
 //        task16();
@@ -49,7 +49,7 @@ public class Main {
 //        task19();
 //        task20();
 //        task21();
-        task22();
+//        task22();
     }
 
     public static void task1() {
@@ -172,10 +172,15 @@ public class Main {
 
     public static void task13() {
         List<House> houses = Util.getHouses();
-//        houses.stream().
-    }
+        int peopleInHospital;
+        Map<Boolean, List<List<Person>>> commonMap = houses.stream()
+                .collect(Collectors.partitioningBy(h -> h.getBuildingType().equals("Hospital"),
+                        Collectors.mapping(house -> house.getPersonList(), Collectors.toList())));
+        List<Person> collect1 = commonMap.get(true).stream().flatMap(List::stream).collect(Collectors.toList());
+        List<Person> collect2 = commonMap.get(false).stream().flatMap(List::stream).collect(Collectors.toList());
+        Stream.concat(collect1, collect2).forEach(System.out::println);
 
-    public static void task14() {
+        public static void task14() {
         List<Car> cars = Util.getCars();
 //        cars.stream() Продолжить ...
     }
