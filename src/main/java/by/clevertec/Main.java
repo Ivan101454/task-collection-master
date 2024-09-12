@@ -47,9 +47,9 @@ public class Main {
 //        task17();
 //        task18();
 //        task19();
-        task20();
+//        task20();
 //        task21();
-//        task22();
+        task22();
     }
 
     public static void task1() {
@@ -232,7 +232,7 @@ public class Main {
         List<Examination> examinations = Util.getExaminations();
         Map<Integer, Integer> valueStudents = examinations.stream()
                 .collect(Collectors.toMap(Examination::getStudentId,
-                                Examination::getExam1));
+                        Examination::getExam1));
         Map<String, IntSummaryStatistics> collect = students.stream()
                 .filter(x -> valueStudents.containsKey(x.getId()))
                 .collect(Collectors.groupingBy(Student::getGroup,
@@ -240,23 +240,29 @@ public class Main {
         Optional<Map.Entry<String, IntSummaryStatistics>> max = collect.entrySet()
                 .stream()
                 .max((d1, d2) -> {
-                            if (d1.getValue().getAverage() > d2.getValue().getAverage()) return (int) d1.getValue().getAverage();
+                            if (d1.getValue().getAverage() > d2.getValue().getAverage())
+                                return (int) d1.getValue().getAverage();
                             return (int) d2.getValue().getAverage();
                         }
                 );
         System.out.println("Группа с макс средним баллом номер - " + max
                 .orElseThrow().getKey()
-                + " и он равняется =" + max.orElseThrow().getValue().getAverage());
+                           + " и он равняется =" + max.orElseThrow().getValue().getAverage());
     }
 
 
     public static void task21() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        students.stream()
+                .collect(Collectors.groupingBy(Student::getGroup, Collectors.counting()))
+                .entrySet().forEach(s -> System.out.println("Группа " + s.getKey() + " содержит " + s.getValue() + " человек"));
     }
 
     public static void task22() {
         List<Student> students = Util.getStudents();
-//        students.stream() Продолжить ...
+        students.stream()
+                .collect(Collectors.groupingBy(Student::getGroup, Collectors.minBy(Comparator.comparing(Student::getAge))))
+                .entrySet().forEach(s -> System.out.println("Группа " + s.getKey()
+                                                            + " содержит мин возраст " + s.getValue().orElseThrow().getAge() +" лет"));
     }
 }
