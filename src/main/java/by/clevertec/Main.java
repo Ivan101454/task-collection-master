@@ -79,8 +79,8 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
         Set<String> country = animals.stream()
                 .filter(animal -> animal.getAge() > 30)
-                .filter(animal -> animal.getOrigin().substring(0, 1).equalsIgnoreCase("a"))
-                .map(animal -> animal.getOrigin())
+                .map(Animal::getOrigin)
+                .filter(origin -> origin.substring(0, 1).equalsIgnoreCase("a"))
                 .collect(Collectors.toSet());
         country.forEach(System.out::println);
     }
@@ -107,7 +107,7 @@ public class Main {
         boolean count = animals.stream()
                 .filter(animal -> animal.getGender() != "Male" && animal.getGender() != "Female")
                 .collect(Collectors.toSet()).isEmpty();
-        System.out.println(String.format("Все ли они пола Male и Female ? Answer: %b", !count));
+        System.out.printf("Все ли они пола Male и Female ? Answer: %b%n", !count);
     }
 
     public static void task7() {
@@ -132,8 +132,8 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
         char[] first = animals.stream()
                 .map(a -> a.getBread().toCharArray())
-                .sorted(Comparator.comparing(ch -> Integer.valueOf(ch.length)))
-                .collect(Collectors.toList())
+                .sorted(Comparator.comparing(ch -> ch.length))
+                .toList()
                 .getFirst();
         System.out.println("длину самого короткого массива " + first.length);
     }
@@ -165,22 +165,32 @@ public class Main {
                                    (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) <= 27)))
                 .sorted(Comparator.comparingInt(Person::getRecruitmentGroup))
                 .limit(200)
-                .collect(Collectors.toList());
+                .toList();
         System.out.println("Взять на обучение академия может только: ");
         male.forEach(System.out::println);
     }
 
     public static void task13() {
         List<House> houses = Util.getHouses();
-        int peopleInHospital;
+        System.out.println("500 человек ");
         Map<Boolean, List<List<Person>>> commonMap = houses.stream()
                 .collect(Collectors.partitioningBy(h -> h.getBuildingType().equals("Hospital"),
-                        Collectors.mapping(house -> house.getPersonList(), Collectors.toList())));
-        List<Person> collect1 = commonMap.get(true).stream().flatMap(List::stream).collect(Collectors.toList());
-        List<Person> collect2 = commonMap.get(false).stream().flatMap(List::stream).collect(Collectors.toList());
-        Stream.concat(collect1, collect2).forEach(System.out::println);
+                        Collectors.mapping(House::getPersonList, Collectors.toList())));
+        List<Person> collect1 = commonMap.get(true).stream().flatMap(List::stream).toList();
+        List<Person> collectTemp = commonMap.get(false).stream()
+                .flatMap(List::stream)
+                .toList();
+        List<Person> collect2 = collectTemp.stream().filter(person -> ((ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) <= 18) &&
+                                                                   (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63)))
+                .toList();
+        List<Person> collect3 = collectTemp.stream().filter(person -> ((ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) > 18) &&
+                                                                       (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 63)))
+                .toList();
+        List<Person> listOrderEvacuationbyAge = Stream.concat(collect2.stream(), collect3.stream()).toList();
+        Stream.concat(collect1.stream(), listOrderEvacuationbyAge.stream()).limit(500).forEach(System.out::println);
+    }
 
-        public static void task14() {
+    public static void task14() {
         List<Car> cars = Util.getCars();
 //        cars.stream() Продолжить ...
     }
@@ -268,6 +278,6 @@ public class Main {
         students.stream()
                 .collect(Collectors.groupingBy(Student::getGroup, Collectors.minBy(Comparator.comparing(Student::getAge))))
                 .entrySet().forEach(s -> System.out.println("Группа " + s.getKey()
-                                                            + " содержит мин возраст " + s.getValue().orElseThrow().getAge() +" лет"));
+                                                            + " содержит мин возраст " + s.getValue().orElseThrow().getAge() + " лет"));
     }
 }
