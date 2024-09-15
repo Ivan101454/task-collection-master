@@ -41,8 +41,8 @@ public class Main {
 //        task11();
 //        task12();
 //        task13();
-        task14();
-//        task15();
+//        task14();
+        task15();
 //        task16();
 //        task17();
 //        task18();
@@ -204,7 +204,7 @@ public class Main {
                                                          a.getCarMake().equals("Chrysler") ||
                                                          a.getCarMake().equals("Toyota"))));
         Optional<Integer> mass2 = bmw.get(true).stream().map(Car::getMass).reduce(Integer::sum);
-        System.out.println("Второй эшелон масса %d, итого  %f".formatted(mass2.orElse(0), mass2.orElse(0)*price));
+        System.out.println("Второй эшелон масса %d, итого  %f".formatted(mass2.orElse(0), mass2.orElse(0) * price));
         Map<Boolean, List<Car>> gmc = bmw.get(false).stream()
                 .collect(Collectors
                         .partitioningBy(a -> ((a.getColor().equals("Black"))
@@ -212,14 +212,14 @@ public class Main {
                                              || (a.getCarMake().equals("GMC")
                                                  || a.getCarMake().equals("Dodge"))));
         Optional<Integer> mass3 = gmc.get(true).stream().map(Car::getMass).reduce(Integer::sum);
-        System.out.println("Третий эшелон масса %d, итого  %f".formatted(mass3.orElse(0), mass3.orElse(0)*price));
+        System.out.println("Третий эшелон масса %d, итого  %f".formatted(mass3.orElse(0), mass3.orElse(0) * price));
         Map<Boolean, List<Car>> civic = gmc.get(false)
                 .stream()
                 .collect(Collectors.partitioningBy(a -> (a.getReleaseYear() < 1982)
                                                         || (a.getCarModel().equals("Civic"))
                                                         || (a.getCarModel().equals("Cherokee"))));
         Optional<Integer> mass4 = civic.get(true).stream().map(Car::getMass).reduce(Integer::sum);
-        System.out.println("Четвертый эшелон масса %d, итого  %f".formatted(mass4.orElse(0), mass4.orElse(0)*price));
+        System.out.println("Четвертый эшелон масса %d, итого  %f".formatted(mass4.orElse(0), mass4.orElse(0) * price));
         Map<Boolean, List<Car>> yellow = civic.get(false).stream()
                 .collect(Collectors.partitioningBy(a -> (!(a.getPrice() > 40000)
                                                          || (a.getColor().equals("Yellow"))
@@ -228,19 +228,34 @@ public class Main {
                                                          || (a.getColor().equals("Blue"))
                 )));
         Optional<Integer> mass5 = yellow.get(false).stream().map(Car::getMass).reduce(Integer::sum);
-        System.out.println("Пятый эшелон масса %d, итого  %f".formatted(mass5.orElse(0), mass5.orElse(0)*price));
+        System.out.println("Пятый эшелон масса %d, итого  %f".formatted(mass5.orElse(0), mass5.orElse(0) * price));
         Map<Boolean, List<Car>> vin = yellow.get(true).stream().collect(Collectors.partitioningBy(a -> a.getVin().contains("59")));
         Optional<Integer> mass6 = vin.get(true).stream().map(Car::getMass).reduce(Integer::sum);
-        System.out.println("Шестой эшелон масса %d, итого  %f".formatted(mass6.orElse(0), mass6.orElse(0)*price));
+        System.out.println("Шестой эшелон масса %d, итого  %f".formatted(mass6.orElse(0), mass6.orElse(0) * price));
         int resultMass = mass1.orElse(0) + mass2.orElse(0) + mass3.orElse(0) + mass4.orElse(0)
                          + mass5.orElse(0) + mass6.orElse(0);
-        double resultSumm =  resultMass * price;
+        double resultSumm = resultMass * price;
         System.out.printf("итого вес %d итого сумма %f", resultMass, resultSumm);
     }
 
     public static void task15() {
         List<Flower> flowers = Util.getFlowers();
-//        flowers.stream() Продолжить ...
+        final double WATER_COST_PER_CUBIC_METER = 1.39;
+        final int DAYS_IN_YEAR = 365;
+        final int YEARS = 5;
+        List<Flower> sortedFlowersList = flowers.stream().sorted(Comparator.comparing(Flower::getOrigin).reversed()
+                        .thenComparing(Flower::getWaterConsumptionPerDay).reversed())
+                .toList();
+        double sumResult = sortedFlowersList.stream().filter(flower -> flower.getCommonName().compareToIgnoreCase("C") > 0 &&
+                                                                 flower.getCommonName().compareToIgnoreCase("S") < 0)
+                .filter(flower -> flower.isShadePreferred() && flower.getFlowerVaseMaterial()
+                        .stream().anyMatch(matter -> List.of("Glass", "Aluminum", "Steel").contains(matter)))
+                .mapToDouble(flower -> {
+                    double costOfWater = flower.getWaterConsumptionPerDay() * WATER_COST_PER_CUBIC_METER * DAYS_IN_YEAR * YEARS;
+                    return flower.getPrice() + costOfWater;
+                })
+                .sum();
+        System.out.printf("Общая стоимость обслуживания всех растений = %f $", sumResult);
     }
 
     public static void task16() {
